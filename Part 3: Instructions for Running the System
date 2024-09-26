@@ -1,0 +1,14 @@
+Install Dependencies: Ensure you have Docker, Elasticsearch, and Python installed. Install required Python packages using:
+pip install elasticsearch hdfs streamlit
+
+Set Up Docker: Create a Docker container for Elasticsearch:
+docker run -d -p 9200:9200 -e "discovery.type=single-node" elasticsearch:7.10.0
+
+Run the Ingestion Script: Modify the HDFS path in the ingestion script to point to your data, and run the script to ingest the data into Elasticsearch:
+python ingest_script.py
+
+Run Queries: Use the query function to search for terms:
+result = query_tweets("COVID", "twitter_data")
+print(result)
+
+
