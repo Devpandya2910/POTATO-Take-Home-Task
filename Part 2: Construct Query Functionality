@@ -1,0 +1,48 @@
+ You can create a function to query the data using Elasticsearch's query capabilities:
+
+def query_tweets(term, index_name):
+    query = {
+        "query": {
+            "match": {
+                "text": term
+            }
+        },
+        "aggs": {
+            "tweets_per_day": {
+                "date_histogram": {
+                    "field": "created_at",
+                    "calendar_interval": "day"
+                }
+            },
+            "unique_users": {
+                "cardinality": {
+                    "field": "user.id"
+                }
+            },
+            "average_likes": {
+                "avg": {
+                    "field": "likes"
+                }
+            },
+            "tweets_by_location": {
+                "terms": {
+                    "field": "place.id"
+                }
+            },
+            "tweets_by_time": {
+                "date_histogram": {
+                    "field": "created_at",
+                    "calendar_interval": "hour"
+                }
+            },
+            "top_user": {
+                "terms": {
+                    "field": "user.username",
+                    "size": 1
+                }
+            }
+        }
+    }
+    
+    response = es.search(index=index_name, body=query)
+    return response
