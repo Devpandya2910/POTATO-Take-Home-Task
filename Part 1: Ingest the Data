@@ -1,0 +1,26 @@
+Part 1: Ingest the Data
+To ingest data from HDFS (Hadoop Distributed File System) to Elasticsearch, you can use the elasticsearch-py library.
+from hdfs import InsecureClient
+from elasticsearch import Elasticsearch, helpers
+import json
+
+# Connect to HDFS and Elasticsearch
+hdfs_client = InsecureClient('http://localhost:50070')
+es = Elasticsearch()
+
+def ingest_data(hdfs_path, index_name):
+    # Read data from HDFS
+    with hdfs_client.read(hdfs_path) as reader:
+        for line in reader:
+            tweet = json.loads(line)
+            # Prepare the tweet data for Elasticsearch
+            yield {
+                "_index": index_name,
+                "_source": tweet
+            }
+
+# Ingest the data
+hdfs_path = '/path/to/tweets.json'  # HDFS path to your data
+index_name = 'twitter_data'  # Elasticsearch index name
+helpers.bulk(es, ingest_data(hdfs_path, index_name))
+
